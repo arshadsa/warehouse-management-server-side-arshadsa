@@ -90,8 +90,10 @@ async function run() {
     app.post("/product/:id", async (req, res) => {
       const id = req.params.id;
       console.log(id);
+      console.log(req.body);
       const query = { _id: ObjectId(id) };
-      const product = await productsCollection.findOne(query);
+      let product = await productsCollection.findOne(query);
+      console.log(product);
 
       if (req.body.increaseByOne) product.quantity = product.quantity + 1;
       else if (req.body.decreaseByOne) {
@@ -100,6 +102,10 @@ async function run() {
       } else if (req.body.newQuantity) product.quantity = req.body.newQuantity;
       else if (req.body.addQuantity)
         product.quantity = product.quantity + req.body.addQuantity;
+      else if(req.body.edititem)
+        {
+            product = {...product, ...req.body}
+        }
 
       const result = await productsCollection.updateOne(
         { _id: ObjectId(id) },
